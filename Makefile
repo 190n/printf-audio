@@ -2,14 +2,14 @@ CC = clang
 LOOSEFLAGS = -std=c2x -fsanitize=undefined,address -g3 -O2 -Ivendor/miniaudio
 CFLAGS = -Wall -Wextra -pedantic -Wno-format-invalid-specifier -Wconversion -Wsign-conversion -Werror -Wno-format $(LOOSEFLAGS)
 LFLAGS = -fsanitize=undefined,address
-OBJS = garbage.o stb.o miniaudio.o bruh.o
+OBJS = main.o stb.o miniaudio.o bruh.o
 HEADERS = $(wildcard *.h)
 
 .PHONY: all clean format
 
-all: garbage
+all: printf-audio
 
-garbage: $(OBJS)
+printf-audio: $(OBJS)
 	$(CC) $(LFLAGS) -o $@ $^
 
 %.o: %.c $(HEADERS)
