@@ -1,0 +1,6 @@
+[submodule "vendor/stb"]
+	path = vendor/stb
+	url = https://github.com/nothings/stb.git
+[submodule "vendor/miniaudio"]
+	path = vendor/miniaudio
+	url = https://github.com/mackron/miniaudio.git
