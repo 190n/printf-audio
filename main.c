@@ -1,4 +1,3 @@
-#include "bruh.h"
 #include "miniaudio.h"
 #include "stb.h"
 
@@ -17,7 +16,7 @@ static void miniaudio_callback(
     ma_device *device, void *output, const void *input, ma_uint32 frame_count) {
 	(void) input;
 	UserData *user_data = device->pUserData;
-	int samples_returned = stb_vorbis_get_samples_short_interleaved(user_data->vorbis_file,
+	int samples_returned = stb_vorbis_get_samples_float_interleaved(user_data->vorbis_file,
 	    (int) device->playback.channels, output,
 	    (int) frame_count * (int) device->playback.channels);
 
@@ -47,7 +46,7 @@ static int custom_specifier(FILE *stream, const struct printf_info *info, const 
 	};
 
 	ma_device_config device_config = ma_device_config_init(ma_device_type_playback);
-	device_config.playback.format = ma_format_s16;
+	device_config.playback.format = ma_format_f32;
 	device_config.playback.channels = 2;
 	device_config.sampleRate = vorb_info.sample_rate;
 	device_config.dataCallback = miniaudio_callback;
@@ -63,10 +62,10 @@ static int custom_specifier(FILE *stream, const struct printf_info *info, const 
 		return bytes_written;
 	}
 
-	bytes_written += fprintf(stream, "played 2ch s16 %uHz\n", vorb_info.sample_rate);
+	bytes_written += fprintf(stream, "played 2ch f32 %uHz\n", vorb_info.sample_rate);
 
 	while (!user_data.finished) {
-		thrd_sleep(&(struct timespec) { .tv_sec = 0, .tv_nsec = 10 * 1000 * 1000 }, nullptr);
+		thrd_sleep(&(struct timespec) { .tv_sec = 0, .tv_nsec = 10'000'000 }, nullptr);
 	}
 
 	ma_device_uninit(&device);
@@ -87,8 +86,11 @@ static int custom_arginfo(const struct printf_info *info, size_t n, int *argtype
 }
 
 int main(void) {
-	register_printf_specifier('G', custom_specifier, custom_arginfo);
-	printf("%G", bruh_ogg, bruh_ogg_len);
+	register_printf_specifier('V', custom_specifier, custom_arginfo);
+	const unsigned char bruh[] = {
+#embed "bruh.ogg"
+	};
+	printf("%V", bruh, sizeof bruh);
 
 	return 0;
 }
