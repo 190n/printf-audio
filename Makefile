@@ -1,9 +1,11 @@
-CC = clang
-LOOSEFLAGS = -std=c2x -fsanitize=undefined,address -g3 -Ivendor/miniaudio -O2
-CFLAGS = -Wall -Wextra -pedantic -Wno-format-invalid-specifier -Wconversion -Wsign-conversion -Werror -Wno-format $(LOOSEFLAGS)
-LFLAGS = -fsanitize=undefined,address -lm
-OBJS = main.o stb.o miniaudio.o
-HEADERS = $(wildcard *.h)
+CC         = clang
+OPT        =
+SANITIZE   = -fsanitize=undefined,memory -fsanitize-memory-track-origins -fsanitize-trap
+LOOSEFLAGS = -std=c2x -g3 -Ivendor/miniaudio $(OPT) $(SANITIZE)
+CFLAGS     = -Wall -Wextra -pedantic -Wno-format-invalid-specifier -Wconversion -Wsign-conversion -Werror -Wno-format $(LOOSEFLAGS)
+LFLAGS     = $(SANITIZE) -lm
+OBJS       = main.o stb.o miniaudio.o
+HEADERS    = $(wildcard *.h)
 
 .PHONY: all clean format
 
